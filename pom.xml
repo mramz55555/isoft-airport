@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.isoft</groupId>
-    <artifactId>airport</artifactId>
+    <artifactId>flight-reservator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>airport</name>
-    <description>airport</description>
+    <name>flight-reservator</name>
+    <description>Isoft flight reservator</description>
     <properties>
         <java.version>19</java.version>
     </properties>
