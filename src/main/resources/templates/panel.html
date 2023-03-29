@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>User Panel</title>
+
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+    <style>
+        body{background: url("../images/admin.jpg")}
+        .clearfix{
+            display: inline-block;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div th:replace="fragements/menu">...</div>
+
+
+<!-- login block -->
+<section style="backdrop-filter: blur(20px);border:black 1px solid;padding: 0.5em;/*border-radius: 4px*/;margin-bottom: 1em" class="w3l-contact py-5" id="contact">
+    <div class="container py-md-5 py-4">
+        <div class="title-main text-center mx-auto mb-md-5 mb-4" style="max-width:500px;">
+            <h3 class="title-style" th:text="${'Welcome - ' + #authentication.principal}"></h3>
+            <p class="title-style"
+               th:text="${'You logged in as - ' + role}"></p>
+        </div>
+
+    </div>
+</section>
+
+
+<div style="backdrop-filter: blur(20px);border:black 1px solid;padding: 0.5em;width:20rem;text-align: center" class="container py-md-5 py-4">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="row m-t-25" sec:authorize="hasRole('ADMIN')">
+                <div class="col-sm-6 col-lg-3">
+                    <a style="text-decoration: none" th:href="@{/admin/passengers(page-number=1)}">
+                        <div class="overview-item overview-item--c4">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="alignment:center;background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Passengers</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3" sec:authorize="authenticated">
+                    <a style="background-image:linear-gradient(left,#98bbda,#6ee0d5);width: auto;height: auto" th:href="@{/admin/bookings}">
+                        <div class="overview-item overview-item--c3">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Bookings</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/employees}">
+                        <div class="overview-item overview-item--c1">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Employees</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/flights}">
+                        <div class="overview-item overview-item--c2">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Flights</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/flight-log}">
+                        <div class="overview-item overview-item--c2">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Flights Logs</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/airlines}">
+                        <div class="overview-item overview-item--c2">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Airlines</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

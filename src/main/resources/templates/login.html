@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+</head>
+<body>
+<div th:replace="fragements/menu">...</div>
+
+<div id="login-form">
+    <div id="header">
+        <h1>Login</h1>
+    </div>
+    <div>
+        <section>
+            <div class="flight" id="flightbox">
+                <p style="background-color: #ff8181" th:if="${error!=null}" th:text="${error}"></p>
+                <p style="background-color: #90e59a" th:if="${message!=null}" th:text="${message}"></p>
+                <form th:action="@{/login}" method="post">
+
+                    <div id="login-div">
+                        <div class="arriveDateBox">
+                            <label style="color: #00002c;" for="username">EMAIL</label>
+                            <input type="text" style="height: 30px;border:whitesmoke 4px solid;" name="username" id="username"><br><br>
+                            <label style="color: #00002c" for="password">PASSWORD</label>
+                            <input type="password" name="password" id="password" style="height: 30px;border:whitesmoke 4px solid"><br><br>
+                        </div>
+
+                    </div>
+
+                    <div id="flight-search">
+                        <div class="arriveDateBox">
+                            <input type="submit" id="search-flight" value="LOGIN"/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+    <title th:text="${passengerName+'''s bookings'}"></title>
+
+    <style>
+        .remove-link:visited{
+            color: #00002c;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragements/menu">...</div>
+
+<table>
+    <thead>
+         <tr class="query-header">
+             <th>from</th>
+             <th>to</th>
+             <th>departure</th>
+             <th>arrival</th>
+             <th>airline</th>
+             <th>airplane</th>
+             <th>seat</th>
+             <th>price</th>
+             <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr th:each="booking : ${bookings}">
+            <td th:text="${booking.flight.fromAirport.name}"></td>
+            <td th:text="${booking.flight.toAirport.name}"></td>
+            <td th:text="${booking.flight.airline.airlineName}"></td>
+            <td th:text="${booking.flight.departure}"></td>
+            <td th:text="${booking.flight.arrival}"></td>
+            <td th:text="${booking.flight.airplane.airplaneType.identifier}"></td>
+            <td th:text="${booking.seat}"></td>
+            <td th:text="${booking.price}"></td>
+            <td style="background: #fd6f6f;"><a class="remove-link" th:href="@{/admin/boookings/remove(booking_id=${booking.bookingId})}">Remove</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<a th:if="${bookings!=null}" id="left-load" style="text-decoration: none"
+   th:href="@{'/admin/passenger/bookings?page-number=' + ${pageNumber==null || pageNumber <=1 ? 1 : pageNumber - 1 }}">Previous</a>
+<a th:if="${bookings!=null}" id="right-load" style="text-decoration: none"
+   th:href="@{'/admin/passenger/bookings?passenger_id='+${passengerId}+'&page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
+</body>
+</html>

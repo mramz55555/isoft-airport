@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Isoft Flight Reservatore</title>
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+</head>
+<body>
+<div th:replace="fragements/menu">...</div>
+
+<div id="search-form">
+    <div id="header">
+        <h1>SEARCH FOR FLIGHTS</h1>
+    </div>
+    <section>
+        <div class="flight" id="flightbox">
+            <p style="background-color: #ff8181" th:each=" error : ${errors}" th:text="${error}"></p>
+            <form th:action="@{/search}" method="get" id="flight-form" th:object="${flightForm}">
+
+                <!-- FROM-->
+                <div id="flight-depart">
+                    <div class="arriveDateBox">
+                        <label for="from">FROM</label>
+                        <select th:field="*{from}" name="from" id="from">
+                            <option th:each="flight : ${flights}" th:text="${flight.fromAirport.name}"
+                                    th:value="${flight.fromAirport.name}"></option>
+                        </select><br><br>
+                        <a id="left-load" style="text-decoration: none"
+                           th:href="@{'/home?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
+                        <a id="right-load" style="text-decoration: none"
+                           th:href="@{'/home?page-number='+${pageNumber <= totalPages ? pageNumber +1 : totalPages - 1}}">Next</a>
+                        <div id="depart-res"></div>
+                    </div>
+                    <div class="arriveDateBox" id="arriveBox">
+                        <label for="departureDate">DEPARTURE TIME</label>
+                        <input th:field="*{departureDate}" type="date" name="departureDate" id="departureDate">
+                    </div>
+                </div>
+
+                <!--TO-->
+                <div id="flight-dates">
+                    <div class="arriveDateBox">
+                        <label for="to">TO</label>
+                        <select th:field="*{to}" name="to" id="to">
+                            <option th:each="flight : ${flights}" th:text="${flight.toAirport.name}"
+                                    th:value="${flight.toAirport.name}"></option>
+                        </select>
+                    </div>
+                    <div class="arriveDateBox" id="arriveDateBox">
+                        <label for="arrivalDate">ARRIVAL TIME</label>
+                        <input th:field="*{arrivalDate}" type="date" name="arrivalDate" id="arrivalDate">
+                    </div>
+                </div>
+
+                <!-- PASSENGER INFO -->
+                <div id="flight-info">
+                    <div class="arriveDateBox">
+                        <label for="adults">ADULTS</label>
+                        <select th:field="*{numberOFAdults}" name="adults" id="adults">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="arriveDateBox">
+                        <label th:field="*{numberOfChildren}" for="children">CHILDREN</label>
+                        <select name="children" id="children">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="0">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="arriveDateBox">
+                        <label th:field="*{classType}" for="classType">CLASS</label>
+                        <select name="classType" id="classType">
+                            <option value="ECONOMY">ECONOMY</option>
+                            <option value="BUSINESS">BUSINESS</option>
+                            <option value="FIRST CLASS">FIRST CLASS</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- SEARCH BUTTON -->
+                <div id="flight-search">
+                    <div class="arriveDateBox">
+                        <input type="submit" id="search-flight" value="SEARCH FLIGHTS"/>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </section>
+</div>
+
+<script>
+    if (document.getElementById('return-date').checked) {
+        console.log('ok')
+        document.getElementById("return-date").disabled = true;
+    }
+</script>
+</body>
+</html>

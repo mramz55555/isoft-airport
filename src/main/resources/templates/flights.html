@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Result</title>
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+</head>
+<div th:replace="fragements/menu">...</div>
+<table th:if="${flights!=null}" id="flights" style="overflow: auto;margin:2% 5% 2% 5%">
+    <tr>
+        <th>Beginning Airport</th>
+        <th>Destination Airport</th>
+        <th>Departure Date</th>
+        <th>Arrival Date</th>
+        <th></th>
+    </tr>
+    <p class="search-alert" th:if="${flights.isEmpty()}">No Flights Available!</p>
+
+    <tr th:if="${!flights.isEmpty()}" th:each="flight : ${flights}">
+        <td th:text="${flight.fromAirport.name}"></td>
+        <td th:text="${flight.toAirport.name}"></td>
+        <td th:text="${flight.departure}"></td>
+        <td th:text="${flight.arrival}"></td>
+        <td>
+            <a th:href="@{'/search/flights/schedule/'+${flight.schedule.flightno}}" id="view-button">View</a>
+        </td>
+    </tr>
+</table>
+
+<table id="flight-schedule" th:if="${flightSchedule!=null}" >
+    <thead>
+    <tr id="flight-schedule-header">
+        <th>Flight number</th>
+        <th>Beginning Airport</th>
+        <th>Destination Airport</th>
+        <th>Departure Time</th>
+        <th>Arrival Time</th>
+        <th>Airline</th>
+        <th>Days</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${flightSchedule.flightno}"></td>
+        <td th:text="${flightSchedule.fromAirport.name}"></td>
+        <td th:text="${flightSchedule.toAirport.name}"></td>
+        <td th:text="${flightSchedule.departure}"></td>
+        <td th:text="${flightSchedule.arrival}"></td>
+        <td th:text="${flightSchedule.airline.airlineName}"></td>
+        <td th:text="${flightSchedule.getFlightDays()}"></td>
+        <td th:href="@{'/reserve-flight?flightno='+ ${flightSchedule.flightno}}" id="reserve-button"><a th:href="@{'/reserve-flight?flightno='+${flightSchedule.flightno}}">Reserve</a></td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:if="${flights!=null}" id="left-load" style="text-decoration: none"
+   th:href="@{'/search/flights?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
+<a th:if="${flights!=null}" id="right-load" style="text-decoration: none"
+   th:href="@{'/search/flights?page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
+
+</body>
+</html>
