@@ -2,7 +2,6 @@ package com.isoft.airport.models;
 
 import lombok.*;
 
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class AirportGeo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "airport_id",insertable = false,updatable = false)
-    private int airportId;
+    private long airportId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "airport_id",insertable = false,updatable = false)
     private Airport airport;
@@ -29,7 +28,7 @@ public class AirportGeo extends BaseEntity {
         this.airport = airport;
     }
 
-    public void setAirportId(int airportId) {
+    public void setAirportId(long airportId) {
         this.airportId = airportId;
     }
 

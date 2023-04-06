@@ -17,7 +17,7 @@ public class Employee extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "employee_id")
-    private int employeeId;
+    private long employeeId;
     private String firstname;                                                           
     private String lastname;                                                          
     private LocalDate birthdate;
@@ -26,9 +26,11 @@ public class Employee extends BaseEntity {
     private String city;                                                          
     private int zip;
     private String country;
+    @Column(name = "emailaddress")
     private String emailAddress;
     private String telephoneno;                                                           
-    private double salary;                                                           
+    private double salary;
+    @Enumerated(EnumType.STRING)
     private Department department;    
     private String username;                                                             
     private String password; 

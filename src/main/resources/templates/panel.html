@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -56,23 +56,6 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-sm-6 col-lg-3" sec:authorize="authenticated">
-                    <a style="background-image:linear-gradient(left,#98bbda,#6ee0d5);width: auto;height: auto" th:href="@{/admin/bookings}">
-                        <div class="overview-item overview-item--c3">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i class="fas fa-envelope-open-text"></i>
-                                    </div>
-                                    <div class="text">
-                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
-                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Bookings</h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
                 <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/admin/employees}">
                         <div class="overview-item overview-item--c1">
@@ -108,7 +91,7 @@
                     </a>
                 </div>
                 <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/flight-log}">
+                    <a th:href="@{/admin/airports}">
                         <div class="overview-item overview-item--c2">
                             <div class="overview__inner">
                                 <div class="overview-box clearfix">
@@ -117,24 +100,7 @@
                                     </div>
                                     <div class="text">
                                         <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
-                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Flights Logs</h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/airlines}">
-                        <div class="overview-item overview-item--c2">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i class="fas fa-envelope-open-text"></i>
-                                    </div>
-                                    <div class="text">
-                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
-                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Airlines</h2>
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Airports</h2>
                                     </div>
                                 </div>
                             </div>

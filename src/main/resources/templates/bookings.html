@@ -19,9 +19,9 @@
          <tr class="query-header">
              <th>from</th>
              <th>to</th>
+             <th>airline</th>
              <th>departure</th>
              <th>arrival</th>
-             <th>airline</th>
              <th>airplane</th>
              <th>seat</th>
              <th>price</th>
@@ -38,15 +38,15 @@
             <td th:text="${booking.flight.arrival}"></td>
             <td th:text="${booking.flight.airplane.airplaneType.identifier}"></td>
             <td th:text="${booking.seat}"></td>
-            <td th:text="${booking.price}"></td>
-            <td style="background: #fd6f6f;"><a class="remove-link" th:href="@{/admin/boookings/remove(booking_id=${booking.bookingId})}">Remove</a></td>
+            <td th:text="${booking.price}+'$'"></td>
+            <td style="background: #fd6f6f;"><a class="remove-link" th:href="@{/admin/passenger/bookings/remove(booking_id=${booking.bookingId})}">Remove</a></td>
         </tr>
     </tbody>
 </table>
 
 <a th:if="${bookings!=null}" id="left-load" style="text-decoration: none"
-   th:href="@{'/admin/passenger/bookings?page-number=' + ${pageNumber==null || pageNumber <=1 ? 1 : pageNumber - 1 }}">Previous</a>
+   th:href="@{'/admin/passenger/bookings?page-number=' + ${pageNumber==null || pageNumber <=1 ? 1 : pageNumber - 1 }+'&passenger_id='+${passengerId==null ? 1 : passengerId}}">Previous</a>
 <a th:if="${bookings!=null}" id="right-load" style="text-decoration: none"
-   th:href="@{'/admin/passenger/bookings?passenger_id='+${passengerId}+'&page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
+   th:href="@{'/admin/passenger/bookings?passenger_id='+${passengerId==null ? 1 : passengerId}+'&page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
 </body>
 </html>

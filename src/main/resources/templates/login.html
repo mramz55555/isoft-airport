@@ -17,7 +17,7 @@
             <div class="flight" id="flightbox">
                 <p style="background-color: #ff8181" th:if="${error!=null}" th:text="${error}"></p>
                 <p style="background-color: #90e59a" th:if="${message!=null}" th:text="${message}"></p>
-                <form th:action="@{/login}" method="post">
+                <form th:action="@{/public/login}" method="post">
 
                     <div id="login-div">
                         <div class="arriveDateBox">
@@ -25,13 +25,14 @@
                             <input type="text" style="height: 30px;border:whitesmoke 4px solid;" name="username" id="username"><br><br>
                             <label style="color: #00002c" for="password">PASSWORD</label>
                             <input type="password" name="password" id="password" style="height: 30px;border:whitesmoke 4px solid"><br><br>
+                            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/><br><br>
                         </div>
-
+                        <a style="color: #15004f" class="new-user" th:href="@{/public/sign-up}">New User ?</a>
                     </div>
 
                     <div id="flight-search">
                         <div class="arriveDateBox">
-                            <input type="submit" id="search-flight" value="LOGIN"/>
+                            <input type="submit" id="submit" value="LOGIN"/>
                         </div>
                     </div>
 

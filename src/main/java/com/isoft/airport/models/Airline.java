@@ -17,7 +17,7 @@ public class Airline extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "airline_id")
-    private int airlineId;
+    private long airlineId;
     private String iata;
     @Column(name = "airlinename")
     private String airlineName;

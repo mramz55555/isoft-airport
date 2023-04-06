@@ -1,12 +1,10 @@
 package com.isoft.airport.controllers;
 
-import com.isoft.airport.models.Booking;
-import com.isoft.airport.models.FullPassenger;
-import com.isoft.airport.models.Passenger;
-import com.isoft.airport.repositories.BookingRepository;
-import com.isoft.airport.repositories.FlightRepository;
-import com.isoft.airport.repositories.PassengerDetailsRepository;
-import com.isoft.airport.repositories.PassengerRepository;
+import com.isoft.airport.models.*;
+import com.isoft.airport.services.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,129 +14,202 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import java.sql.ResultSet;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.isoft.airport.controllers.HomeController.parsePageNumber;
+import static com.isoft.airport.controllers.PublicController.parseParam;
 
 @Controller
+@Transactional
 @RequestMapping("/admin")
 public class AdminController {
-    private static final String PAGE_NAME = "passengers";
-    private static final String HEADERS = "headers";
-    private static final String RESULTS_DATA = "resultsData";
-
+    private static final String PASSENGERS = "passengers";
+    private static final String PASSENGER_ID = "passengerId";
+    private static final String PAGE_NUMBER = "pageNumber";
+    private static final String PAGE__NUMBER = "page-number";
+    private static final String TOTAL_PAGES = "totalPages";
+    private static final String BOOKINGS = "bookings";
     private final int nOfRecords = 15;
 
-    private final JdbcTemplate template;
-    private final PassengerDetailsRepository passengerDetailsRepository;
-    private final PassengerRepository passengerRepository;
-    private final BookingRepository bookingRepository;
-    private final FlightRepository flightRepository;
+    private final PassengerDetailsService passengerDetailsService;
+    private final PassengerService passengerService;
+    private final BookingService bookingService;
+    private final FlightScheduleService flightScheduleService;
+    private final FlightService flightService;
+    private final EmployeeService employeeService;
+    private final AirportService airportService;
+    private final AirportReachableService airportReachableService;
 
-    public AdminController(JdbcTemplate template, PassengerDetailsRepository passengerDetailsRepository, PassengerRepository passengerRepository, BookingRepository bookingRepository, FlightRepository flightRepository) {
-        this.template = template;
-        this.passengerDetailsRepository = passengerDetailsRepository;
-        this.passengerRepository = passengerRepository;
-        this.bookingRepository = bookingRepository;
-        this.flightRepository = flightRepository;
+
+    public AdminController(JdbcTemplate template, PassengerDetailsService passengerDetailsService,
+                           PassengerService passengerService, BookingService bookingService,
+                           FlightScheduleService flightScheduleService, FlightService flightService, EmployeeService employeeService, AirportService airportService, AirportReachableService airportReachableService) {
+
+        this.passengerDetailsService = passengerDetailsService;
+        this.passengerService = passengerService;
+        this.bookingService = bookingService;
+        this.flightScheduleService = flightScheduleService;
+        this.flightService = flightService;
+        this.employeeService = employeeService;
+        this.airportService = airportService;
+        this.airportReachableService = airportReachableService;
     }
 
+    @GetMapping("/" + PASSENGERS)
+    public String showPASSENGERS(Model model, @RequestParam(required = false, name = PAGE__NUMBER) String pageNumber, HttpSession session) {
+        int pageNumber1 = PublicController.parseParam(pageNumber, true);
 
-    @GetMapping("/passengers")
-    public String showPassengers(Model model, @RequestParam(required = false, name = "page-number") String pageNumber) {
-        int pageNumber1 = HomeController.parsePageNumber(pageNumber, true);
-
-        List<FullPassenger> fullPassengerList = template.query("select p.passenger_id, passportNo,firstname,lastname,birthdate,gender,street,city,zip,country," +
-                "emailaddress,telephoneno from passenger inner join passengerdetails p on passenger.passenger_id = p.passenger_id limit "
-                + nOfRecords + " offset " + (pageNumber1 - 1) * nOfRecords, (ResultSet rs, int rn) -> {
-            FullPassenger fullPassenger = new FullPassenger();
-            fullPassenger.setPassengerId(rs.getInt(1));
-            fullPassenger.setPassportNo(rs.getString(2));
-            fullPassenger.setFirstName(rs.getString(3));
-            fullPassenger.setLastName(rs.getString(4));
-            fullPassenger.setBirthdate(rs.getObject(5, LocalDate.class));
-            fullPassenger.setGender(rs.getString(6).charAt(0));
-            fullPassenger.setStreet(rs.getString(7));
-            fullPassenger.setCity(rs.getString(8));
-            fullPassenger.setZip(rs.getInt(9));
-            fullPassenger.setCountry(rs.getString(10));
-            fullPassenger.setEmailAddress(rs.getString(11));
-            fullPassenger.setTelephoneNo(rs.getString(12));
-            return fullPassenger;
-        });
-        model.addAttribute("passengers", fullPassengerList);
-
-        model.addAttribute("pageNumber", pageNumber1);
-        model.addAttribute("totalPages", Math.ceil((double) template.query(
-                "select row_number() over() as rn from passenger order by rn desc limit 1;", (rs, rn) -> rs.getInt(1)).get(0) / 15));
-        return PAGE_NAME;
+        Page<FullPassenger> fullPassengerPage = passengerService.findAllFullPassenger(PageRequest.of(pageNumber1, nOfRecords));
+        model.addAttribute(PASSENGERS, fullPassengerPage);
+        model.addAttribute(PAGE_NUMBER, pageNumber1);
+        if (session.getAttribute(TOTAL_PAGES) == null)
+            session.setAttribute(TOTAL_PAGES, fullPassengerPage.getTotalPages());
+        model.addAttribute(TOTAL_PAGES, session.getAttribute(TOTAL_PAGES));
+        return PASSENGERS;
     }
 
-    @GetMapping("passengers/remove")
+    @GetMapping("/" + PASSENGERS + "/remove")
     @Transactional
     public String deletePassenger(@RequestParam(required = false, name = "passenger_id") String passengerId) {
-        int passengerId1 = parsePageNumber(passengerId, false);
+        long passengerId1 = parseParam(passengerId, false);
 
-        Optional<Passenger> optionalPassenger = passengerRepository.findById(passengerId1);
+        Optional<Passenger> optionalPassenger = passengerService.findById(passengerId1);
         if (optionalPassenger.isPresent()) {
             Set<Booking> bookingsSet = optionalPassenger.get().getBookings();
             bookingsSet.forEach(b -> b.getFlight().getBookings().remove(b));
-            bookingRepository.deleteAll(bookingsSet);
+            bookingService.deleteAll(bookingsSet);
 
-            passengerDetailsRepository.deleteById(passengerId1);
-            passengerRepository.deleteById(passengerId1);
+            passengerDetailsService.deleteById(passengerId1);
+            passengerService.deleteById(passengerId1);
         }
-        return "redirect:/admin/passengers";
+        return "redirect:/admin/" + PASSENGERS;
     }
 
     @GetMapping("/passenger/bookings")
     public String showPassengerBookings(@RequestParam(value = "passenger_id", required = false) String passengerId,
-                                        @RequestParam(value = "pageNumber", required = false) String pageNumber,
+                                        @RequestParam(value = PAGE__NUMBER, required = false) String pageNumber,
                                         HttpSession session,
                                         Model model) {
-        int passengerId1 = parsePageNumber(passengerId, false);
-        int pageNumber1 = parsePageNumber(pageNumber, true);
 
-        Optional<Passenger> optionalPassenger = passengerRepository.findById(passengerId1);
+        long passengerId1 = parseParam(passengerId, false);
+        int pageNumber1 = parseParam(pageNumber, true);
+
+        Optional<Passenger> optionalPassenger = passengerService.findById(passengerId1);
 
         if (optionalPassenger.isPresent()) {
 
             Passenger passenger = optionalPassenger.get();
 
             model.addAttribute("passengerName", passenger.getFirstName() + " " + passenger.getLastName());
-            model.addAttribute("pageNumber", pageNumber1);
+            model.addAttribute(PAGE_NUMBER, pageNumber1);
 
-            if (session.getAttribute("passengerId") == null)
-                session.setAttribute("passengerId", passenger.getPassengerId());
+            if (session.getAttribute(PASSENGER_ID) == null)
+                session.setAttribute(PASSENGER_ID, passenger.getPassengerId());
             else
-                model.addAttribute("passengerId", session.getAttribute("passengerId"));
+                model.addAttribute(PASSENGER_ID, session.getAttribute(PASSENGER_ID));
 
-            Set<Booking> bookings;
-            if (session.getAttribute("bookings") == null) {
-                bookings = passenger.getBookings();
-                session.setAttribute("bookings", bookings);
-            }
-            else
-                bookings = (Set<Booking>) session.getAttribute("bookings");
+            Set<Booking> bookings = passenger.getBookings();
 
-            model.addAttribute("totalPages", Math.ceil(bookings.size() / nOfRecords));
-            model.addAttribute("bookings", bookings
+            model.addAttribute(TOTAL_PAGES, Math.ceil(bookings.size() / nOfRecords));
+            model.addAttribute(BOOKINGS, bookings
                     .stream()
                     .skip(nOfRecords * (pageNumber1 - 1))
                     .limit(nOfRecords)
                     .toList());
 
-            return "bookings";
+            return BOOKINGS;
         }
         throw new IllegalArgumentException("Invalid parameter");
     }
 
-//    @GetMapping("/bookings")
-//    public String showBookings(){
-//
-//    }
+    @GetMapping("/passenger/bookings/remove")
+    @Transactional
+    public String removeBooking(@RequestParam(name = "booking_id") long bookingId, HttpSession session) {
+        Optional<Booking> optionalBooking = bookingService.findById(bookingId);
+        if (optionalBooking.isPresent()) {
+            Booking booking = optionalBooking.get();
+            booking.getFlight().getBookings().remove(booking);
+            booking.getPassenger().getBookings().remove(booking);
+            bookingService.deleteById(bookingId);
+            return "redirect:/admin/passenger/bookings?passenger_id=" + session.getAttribute("passengerId");
+        }
+        throw new IllegalArgumentException("Booking not found");
+    }
+
+
+    @GetMapping("/employees")
+    @Transactional
+    public String showEmployees(Model model, @RequestParam(value = PAGE__NUMBER, required = false) String pageNumber) {
+        long pageNumber1 = parseParam(pageNumber, true);
+        Page<Employee> page = employeeService.findAll(PageRequest.of((int) pageNumber1,
+                nOfRecords, Sort.by("firstname", "lastname")));
+
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("employees", page.getContent());
+        model.addAttribute("pageNumber", pageNumber1);
+        return "employees";
+    }
+
+    @GetMapping("/employee/remove")
+    @Transactional
+    public String removeEmployee(Model model, @RequestParam(value = "employee_id", required = false) String employeeId) {
+        long employeeId1 = parseParam(employeeId, false);
+        Optional<Employee> optionalEmployee = employeeService.findById(employeeId1);
+
+        if (optionalEmployee.isPresent()) {
+            employeeService.deleteById(employeeId1);
+            return "redirect:/admin/employees";
+        }
+        throw new IllegalArgumentException("Employee not found");
+    }
+
+
+    @GetMapping("/flights")
+    public String showFlights(@RequestParam(value = PAGE__NUMBER, required = false) String pageNumber,
+                              @RequestParam(required = false) String flightno,
+                              Model model) {
+        if (flightno != null)
+            PublicController.showFlightSchedule0(flightno, flightScheduleService, model);
+
+        int pageNumber1 = parseParam(pageNumber, true);
+        Page<Flight> flightPage = flightService.findAll(PageRequest.of(
+                pageNumber1 - 1, nOfRecords, Sort.by("departure").descending()));
+
+        model.addAttribute("totalPages", flightPage.getTotalPages());
+        model.addAttribute("pageNumber", pageNumber1);
+        model.addAttribute("flights", flightPage.getContent());
+
+        return "flights";
+    }
+
+    @GetMapping("/airports")
+    public String showAirports(@RequestParam(value = PAGE__NUMBER, required = false) String pageNumber,
+                               Model model) {
+        int pageNumber1 = parseParam(pageNumber, true);
+
+        Page<Airport> airportPage = airportService.findAll(PageRequest.of(
+                pageNumber1 - 1, nOfRecords, Sort.by("name").descending()));
+
+        model.addAttribute("totalPages", airportPage.getTotalPages());
+        model.addAttribute("pageNumber", pageNumber1);
+        model.addAttribute("airports", airportPage.getContent());
+
+        return "airports";
+    }
+
+
+    @GetMapping("/airport/remove")
+    @Transactional
+    public String removeAirport(Model model, @RequestParam(value = "airport_id", required = false) String airportId) {
+
+        long airportId1 = parseParam(airportId, false);
+        Optional<Airport> optionalAirport = airportService.findById(airportId1);
+
+        if (optionalAirport.isPresent()) {
+            airportService.deleteById(airportId1);
+            return "redirect:/admin/airports";
+        }
+        throw new IllegalArgumentException("Airport not found");
+    }
 }
+

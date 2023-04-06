@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+    <title>Airports</title>
+
+    <style>
+        .remove-link:visited {
+            color: #00002c;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragements/menu">...</div>
+
+<table>
+    <thead>
+    <tr class="query-header">
+        <th>iata</th>
+        <th>icao</th>
+        <th>name</th>
+        <th>city</th>
+        <th>country</th>
+        <th>latitude</th>
+        <th>longitude</th>
+        <th>geolocation</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="airport : ${airports}">
+        <td th:text="${airport.iata}"></td>
+        <td th:text="${airport.icao}"></td>
+        <td th:text="${airport.name}"></td>
+        <td th:text="${airport.airportGeos.get(0).city}"></td>
+        <td th:text="${airport.airportGeos.get(0).country}"></td>
+        <td th:text="${airport.airportGeos.get(0).latitude}"></td>
+        <td th:text="${airport.airportGeos.get(0).longitude}"></td>
+        <td th:text="${airport.airportGeos.get(0).geolocation}"></td>
+        <td style="background: #fd6f6f;"><a class="remove-link"
+                                            th:href="@{/admin/airport/remove(airport_id=${airport.airportId})}">Remove</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:if="${airports!=null}" id="left-load" style="text-decoration: none"
+   th:href="@{'/admin/airports?page-number=' + ${pageNumber==null || pageNumber <=1 ? 1 : pageNumber - 1 }}">Previous</a>
+<a th:if="${airports!=null}" id="right-load" style="text-decoration: none"
+   th:href="@{'/admin/airports?page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
+</body>
+</html>

@@ -5,12 +5,14 @@ import com.isoft.airport.models.PassengerDetails;
 import com.isoft.airport.repositories.PassengerDetailsRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -25,13 +27,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers("/", "/home", "/search", "/search/page")
+        http.csrf().ignoringAntMatchers("/public/**", "/admin/**", "/panel", "/reserve-flight")
                 .and().authorizeHttpRequests()
-                .mvcMatchers("/reserve-flight", "/panel","/admin/**").authenticated()
-                .mvcMatchers("/", "/home", "/search/**").permitAll().and()
-                .formLogin().loginPage("/login").permitAll().defaultSuccessUrl("/panel")
+                .mvcMatchers("/reserve-flight", "/panel", "/admin/**").authenticated()
+                .mvcMatchers("/public/**").permitAll().and()
+                .formLogin().loginPage("/public/login").permitAll().defaultSuccessUrl("/panel")
                 .failureUrl("/login?error=true").and().logout().permitAll()
-                .logoutSuccessUrl("/login?logout=true").invalidateHttpSession(true);
+                .logoutSuccessUrl("/public/login?logout=true").invalidateHttpSession(true);
     }
 
     @Bean
@@ -67,5 +69,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         public boolean supports(Class<?> authentication) {
             return UsernamePasswordAuthenticationToken.class.equals(authentication);
         }
+
+        public void autoLogin(String email, String password) {
+            Authentication authenticatedUser =authenticate(new UsernamePasswordAuthenticationToken(email,password));
+            SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
+        }
+    }
+
+    @Bean(name = "authenticationManager")
+    public AuthenticationManager getAuthenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 }

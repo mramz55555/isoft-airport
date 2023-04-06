@@ -15,7 +15,7 @@
     <section>
         <div class="flight" id="flightbox">
             <p style="background-color: #ff8181" th:each=" error : ${errors}" th:text="${error}"></p>
-            <form th:action="@{/search}" method="get" id="flight-form" th:object="${flightForm}">
+            <form th:action="@{/public/search}" method="get" id="flight-form" th:object="${flightForm}">
 
                 <!-- FROM-->
                 <div id="flight-depart">
@@ -26,9 +26,9 @@
                                     th:value="${flight.fromAirport.name}"></option>
                         </select><br><br>
                         <a id="left-load" style="text-decoration: none"
-                           th:href="@{'/home?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
+                           th:href="@{'/public/home?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
                         <a id="right-load" style="text-decoration: none"
-                           th:href="@{'/home?page-number='+${pageNumber <= totalPages ? pageNumber +1 : totalPages - 1}}">Next</a>
+                           th:href="@{'/public/home?page-number='+${pageNumber <= totalPages ? pageNumber +1 : totalPages - 1}}">Next</a>
                         <div id="depart-res"></div>
                     </div>
                     <div class="arriveDateBox" id="arriveBox">

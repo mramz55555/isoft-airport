@@ -17,7 +17,7 @@ public class Booking extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
-    private int bookingId;
+    private long bookingId;
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "flight_id")
     private Flight flight;
@@ -27,7 +27,7 @@ public class Booking extends BaseEntity {
     private Passenger passenger;
     private double price;
 
-    public void setBookingId(int bookingId) {
+    public void setBookingId(long bookingId) {
         this.bookingId = bookingId;
     }
 

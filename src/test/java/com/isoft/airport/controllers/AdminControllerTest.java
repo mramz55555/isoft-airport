@@ -16,7 +16,7 @@ class AdminControllerTest {
     @Autowired
     private  AdminController controller;
     @Autowired
-    private  PassengerDetailsRepository passengerDetailsRepository;
+    private PassengerDetailsRepository passengerDetailsRepository;
     @Autowired
     private  PassengerRepository passengerRepository;
     @Autowired

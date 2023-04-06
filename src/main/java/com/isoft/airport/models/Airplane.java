@@ -1,9 +1,9 @@
 package com.isoft.airport.models;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -18,17 +18,17 @@ public class Airplane extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "airplane_id")
-    private int airplaneId;
+    private long airplaneId;
     private int capacity;
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "type_id")
     private AirplaneType airplaneType;
     @Column(name = "airline_id")
-    private int airlineId;
+    private long airlineId;
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "airplane")
     private Set<Flight> flights;
 
-    public void setAirplaneId(int airplaneId) {
+    public void setAirplaneId(long airplaneId) {
         this.airplaneId = airplaneId;
     }
 
@@ -48,7 +48,7 @@ public class Airplane extends BaseEntity {
         this.capacity = capacity;
     }
 
-    public void setAirlineId(int airlineId) {
+    public void setAirlineId(long airlineId) {
         this.airlineId = airlineId;
     }
 }

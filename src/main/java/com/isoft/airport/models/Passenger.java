@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -17,7 +18,8 @@ import java.util.Set;
 public class Passenger extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int passengerId;
+    @Column(name = "passenger_id")
+    private long passengerId;
     @Column(name = "passportno")
     private String passportNo;
     @Column(name = "firstname")

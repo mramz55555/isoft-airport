@@ -3,36 +3,38 @@ package com.isoft.airport.controllers;
 import com.isoft.airport.models.Flight;
 import com.isoft.airport.models.FlightForm;
 import com.isoft.airport.models.FlightSchedule;
-import com.isoft.airport.repositories.FlightRepository;
-import com.isoft.airport.repositories.FlightScheduleRepository;
+import com.isoft.airport.models.FullPassenger;
+import com.isoft.airport.services.FlightScheduleService;
+import com.isoft.airport.services.FlightService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-public class HomeController {
-    private final FlightScheduleRepository flightScheduleRepository;
-    private final FlightRepository flightRepository;
+@Slf4j
+@RequestMapping("/public")
+@Transactional
+public class PublicController {
+    private final FlightScheduleService flightScheduleService;
+    private final FlightService flightService;
     @Value("${flights.isoft.page.size}")
     public int pageSize;
 
-    public HomeController(FlightScheduleRepository flightScheduleRepository, FlightRepository flightRepository) {
-        this.flightScheduleRepository = flightScheduleRepository;
-        this.flightRepository = flightRepository;
+    public PublicController(FlightScheduleService flightScheduleService, FlightService flightService) {
+        this.flightScheduleService = flightScheduleService;
+        this.flightService = flightService;
     }
 
     @GetMapping({"/", "/home"})
@@ -43,9 +45,9 @@ public class HomeController {
         if (error) model.addAttribute("errors", session.getAttribute("errors"));
 
         model.addAttribute("flightForm", new FlightForm());
-        int pageNumber1 = parsePageNumber(pageNumber,true);
+        int pageNumber1 = parseParam(pageNumber, true);
 
-        Page<Flight> flightPage = flightRepository
+        Page<Flight> flightPage = flightService
                 .findAll(PageRequest.of(pageNumber1 - 1, pageSize, Sort.by("departure")));
 
         model.addAllAttributes(Map.of(
@@ -73,11 +75,11 @@ public class HomeController {
     @GetMapping("/search/flights")
     public String showNthPageOfResult(@RequestParam(name = "page-number") String pageNumber, Model model, HttpSession session) {
 
-        int pageNumber1 = parsePageNumber(pageNumber,true);
+        int pageNumber1 = parseParam(pageNumber, true);
         FlightForm form1 = (FlightForm) session.getAttribute("flightForm");
-        Page<Flight> flightPage = flightRepository.querySearch(PageRequest.of(
+        Page<Flight> flightPage = flightService.querySearch(PageRequest.of(
                         pageNumber1 - 1, pageSize * 2, Sort.by("departure")),
-                form1.getDepartureDate(),form1.getArrivalDate(),form1.getFrom(),form1.getTo());
+                form1.getDepartureDate(), form1.getArrivalDate(), form1.getFrom(), form1.getTo());
 
         model.addAllAttributes(Map.of("totalPages", flightPage.getTotalPages(),
                 "pageNumber", pageNumber1,
@@ -86,9 +88,15 @@ public class HomeController {
         return "flights";
     }
 
+
     @GetMapping("/search/flights/schedule/{flight_schedule_no}")
     public String showFlightSchedule(@PathVariable(name = "flight_schedule_no") String flightScheduleNo, Model model) {
-        Optional<FlightSchedule> optionalFlightSchedule = flightScheduleRepository.findByFlightno(flightScheduleNo);
+        return showFlightSchedule0(flightScheduleNo, flightScheduleService, model);
+    }
+
+
+    public static String showFlightSchedule0(@PathVariable(name = "flight_schedule_no") String flightScheduleNo, FlightScheduleService fr, Model model) {
+        Optional<FlightSchedule> optionalFlightSchedule = fr.findByFlightno(flightScheduleNo);
         if (optionalFlightSchedule.isPresent()) {
             model.addAttribute("flightSchedule", optionalFlightSchedule.get());
             return "flights";
@@ -96,11 +104,34 @@ public class HomeController {
             throw new IllegalArgumentException("Flight Schedule with this flight number not found!");
     }
 
-    public static int parsePageNumber(String param,boolean isPageNumber) {
+
+    @GetMapping("/about")
+    public String showAbout(){
+        return "about";
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(@RequestParam(required = false) Boolean error,
+                                Model model){
+        if (error!=null && error)
+            model.addAttribute("error","Email or password is incorrect");
+        return "login";
+    }
+
+    @GetMapping("/sign-up")
+    public String showSignUpPage(Model model){
+        model.addAttribute("signUpForm",new FullPassenger());
+        return "sign-up";
+    }
+
+
+
+    public static int parseParam(String param, boolean isPageNumber) {
         int param1;
         try {
-            if (isPageNumber) param1 = Integer.parseInt(param==null? (param="1") : param);
-            param1=Integer.parseInt(param);
+            if (isPageNumber)
+                param1 = (param == null) ? 1 : Integer.parseInt(param);
+            else param1 = (param == null) ? param1 = 0 : Integer.parseInt(param);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid param");
         }

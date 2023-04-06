@@ -2,7 +2,6 @@ package com.isoft.airport.models;
 
 import lombok.*;
 
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -16,13 +15,13 @@ public class AirportReachable extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "airport_id",insertable = false,updatable = false)
-    private int airportId;
+    private long airportId;
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "airport_id",insertable = false,updatable = false)
     private Airport airport;
     private int hops;
 
-    public void setAirportId(int airportId) {
+    public void setAirportId(long airportId) {
         this.airportId = airportId;
     }
 

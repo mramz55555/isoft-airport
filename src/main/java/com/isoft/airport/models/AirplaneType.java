@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -20,7 +19,7 @@ public class AirplaneType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "type_id")
-    private int typeId;
+    private long typeId;
     private String identifier,description;
     @OneToMany(mappedBy = "airplaneType",fetch = FetchType.LAZY)
     private Set<Airplane> airplanes=new HashSet<>();
@@ -31,7 +30,7 @@ public class AirplaneType extends BaseEntity {
         airplane.setAirplaneType(this);
     }
 
-    public void setTypeId(int typeId) {
+    public void setTypeId(long typeId) {
         this.typeId = typeId;
     }
 

@@ -17,7 +17,7 @@ public class FlightLog extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "flight_log_id")
-    private int flightLogId;
+    private long flightLogId;
     private LocalDate logDate;
     private String user;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,9 +35,9 @@ public class FlightLog extends BaseEntity {
     private LocalDate arrivalOld;
     private LocalDate departureNew;
     private LocalDate arrivalNew;
-    private int airplaneIdOld;
-    private int airplaneIdNew;
-    private int airlineIdOld;
-    private int airlineIdNew;
+    private long airplaneIdOld;
+    private long airplaneIdNew;
+    private long airlineIdOld;
+    private long airlineIdNew;
     private String comment;
 }

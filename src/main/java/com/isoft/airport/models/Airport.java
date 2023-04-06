@@ -2,11 +2,8 @@ package com.isoft.airport.models;
 
 import lombok.*;
 
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,8 +15,8 @@ public class Airport extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "airport_id")
-    private int airportId;
-    @OneToMany(mappedBy = "airport", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    private long airportId;
+    @OneToMany(mappedBy = "airport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Airline> airlines = new HashSet<>();
     private String iata;
     private String icao;
@@ -33,7 +30,7 @@ public class Airport extends BaseEntity {
     @OneToMany(mappedBy = "toAirport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FlightSchedule> toSchedule = new HashSet<>();
     @OneToMany(mappedBy = "airport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<AirportGeo> airportGeos = new HashSet<>();
+    private List<AirportGeo> airportGeos = new ArrayList<>();
     @OneToMany(mappedBy = "airport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<AirportReachable> airportReachables = new HashSet<>();
 
@@ -53,21 +50,5 @@ public class Airport extends BaseEntity {
         Objects.requireNonNull(airportGeo);
         airportGeo.setAirport(this);
         this.airportGeos.add(airportGeo);
-    }
-
-    public void setAirportIid(int airportId) {
-        this.airportId = airportId;
-    }
-
-    public void setIata(String iata) {
-        this.iata = iata;
-    }
-
-    public void setIcao(String icao) {
-        this.icao = icao;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

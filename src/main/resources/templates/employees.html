@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles/home-style.css"/>
+    <title>Employees</title>
+
+    <style>
+        .remove-link:visited{
+            color: #00002c;
+        }
+    </style>
+</head>
+<body style="margin-left: 3%;width:100%">
+<div th:replace="fragements/menu">...</div>
+
+<table>
+    <thead>
+         <tr class="query-header">
+             <th>firstname</th>
+             <th>lastname</th>
+             <th>salary</th>
+             <th>birthdate</th>
+             <th>gender</th>
+             <th>street</th>
+             <th>city</th>
+             <th>zip</th>
+             <th>country</th>
+             <th>emailAddress</th>
+             <th>telephoneNo</th>
+             <th>department</th>
+             <th>username</th>
+             <th></th>
+             <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr th:each="employee : ${employees}">
+            <td th:text="${employee.firstname}"></td>
+            <td th:text="${employee.lastname}"></td>
+            <td th:text="${employee.salary+'$'}"></td>
+            <td th:text="${employee.birthdate}"></td>
+            <td th:text="${employee.gender}"></td>
+            <td th:text="${employee.street}"></td>
+            <td th:text="${employee.city}"></td>
+            <td th:text="${employee.zip}"></td>
+            <td th:text="${employee.country}"></td>
+            <td th:text="${employee.emailAddress}"></td>
+            <td th:text="${employee.telephoneno}"></td>
+            <td th:text="${employee.department}"></td>
+            <td th:text="${employee.username}"></td>
+            <td style="background: #fd6f6f;"><a class="remove-link" th:href="@{/admin/employee/remove(employee_id=${employee.employeeId})}">Remove</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<a th:if="${employees!=null}" id="left-load" style="text-decoration: none"
+   th:href="@{'/admin/employees?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
+<a th:if="${employees!=null}" id="right-load" style="text-decoration: none"
+   th:href="@{'/admin/employees?page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
+</body>
+
+</html>

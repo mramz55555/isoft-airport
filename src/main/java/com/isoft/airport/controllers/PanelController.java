@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 
-import static com.isoft.airport.config.SecurityConfig.ROLE_ADMIN;
-import static com.isoft.airport.config.SecurityConfig.ROLE_PASSENGER;
 
 @Controller
 public class PanelController{
