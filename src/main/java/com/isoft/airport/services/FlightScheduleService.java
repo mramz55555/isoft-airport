@@ -17,4 +17,5 @@ public class FlightScheduleService {
     public Optional<FlightSchedule> findByFlightno(String flightno) {
         return repository.findByFlightno(flightno);
     }
+
 }

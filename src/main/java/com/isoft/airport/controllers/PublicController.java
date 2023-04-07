@@ -1,11 +1,10 @@
 package com.isoft.airport.controllers;
 
-import com.isoft.airport.models.Flight;
-import com.isoft.airport.models.FlightForm;
-import com.isoft.airport.models.FlightSchedule;
-import com.isoft.airport.models.FullPassenger;
+import com.isoft.airport.models.*;
+import com.isoft.airport.services.BookingService;
 import com.isoft.airport.services.FlightScheduleService;
 import com.isoft.airport.services.FlightService;
+import com.isoft.airport.services.PassengerDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -19,8 +18,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+
+import static com.isoft.airport.controllers.AdminController.nOfRecords;
 
 @Controller
 @Slf4j
@@ -29,12 +32,17 @@ import java.util.Optional;
 public class PublicController {
     private final FlightScheduleService flightScheduleService;
     private final FlightService flightService;
+    private final PassengerDetailsService passengerDetailsService;
+
     @Value("${flights.isoft.page.size}")
     public int pageSize;
+    private final BookingService bookingService;
 
-    public PublicController(FlightScheduleService flightScheduleService, FlightService flightService) {
+    public PublicController(FlightScheduleService flightScheduleService, FlightService flightService, PassengerDetailsService passengerDetailsService, BookingService bookingService) {
         this.flightScheduleService = flightScheduleService;
         this.flightService = flightService;
+        this.passengerDetailsService = passengerDetailsService;
+        this.bookingService = bookingService;
     }
 
     @GetMapping({"/", "/home"})
@@ -68,18 +76,23 @@ public class PublicController {
         }
 
         session.setAttribute("flightForm", form);
-        showNthPageOfResult(pageNumber, model, session);
+        showNthPageOfResult(pageNumber, false, model, session);
         return "flights";
     }
 
     @GetMapping("/search/flights")
-    public String showNthPageOfResult(@RequestParam(name = "page-number") String pageNumber, Model model, HttpSession session) {
+    public String showNthPageOfResult(@RequestParam(name = "page-number") String pageNumber,
+                                      @RequestParam(defaultValue = "true") boolean all, Model model, HttpSession session) {
 
         int pageNumber1 = parseParam(pageNumber, true);
-        FlightForm form1 = (FlightForm) session.getAttribute("flightForm");
-        Page<Flight> flightPage = flightService.querySearch(PageRequest.of(
-                        pageNumber1 - 1, pageSize * 2, Sort.by("departure")),
-                form1.getDepartureDate(), form1.getArrivalDate(), form1.getFrom(), form1.getTo());
+        Page<Flight> flightPage;
+        if (!all) {
+            FlightForm form1 = (FlightForm) session.getAttribute("flightForm");
+            flightPage = flightService.querySearch(PageRequest.of(
+                            pageNumber1 - 1, nOfRecords * 2, Sort.by("departure")),
+                    form1.getDepartureDate(), form1.getArrivalDate(), form1.getFrom(), form1.getTo());
+        } else
+            flightPage = flightService.findAll(PageRequest.of(pageNumber1, nOfRecords * 2, Sort.by("departure").descending()));
 
         model.addAllAttributes(Map.of("totalPages", flightPage.getTotalPages(),
                 "pageNumber", pageNumber1,
@@ -105,25 +118,42 @@ public class PublicController {
     }
 
 
+    @GetMapping("reserve-flight")
+    public String reserveFlight(@RequestParam String flightno, HttpSession session) {
+        Optional<PassengerDetails> optionalPassengerDetails;
+        Optional<FlightSchedule> optionalFlight;
+
+        if ((optionalPassengerDetails = passengerDetailsService.findByEmailAddress((String) session.getAttribute("name")))
+                .isPresent() && (optionalFlight = flightScheduleService.findByFlightno(flightno)).isPresent()) {
+
+            Random random = new Random();
+            bookingService.save(new Booking(new ArrayList<>(optionalFlight.get().getFlights()).get(0),
+                    (char) (random.nextInt(26) + 65) + "" + random.nextInt(30) + 1,
+                    optionalPassengerDetails.get().getPassenger(), random.nextDouble() * 300 + 23));
+
+            return "redirect:/panel/bookings";
+        }
+        throw new IllegalArgumentException("Flightno not found!");
+    }
+
     @GetMapping("/about")
-    public String showAbout(){
+    public String showAbout() {
         return "about";
     }
 
     @GetMapping("/login")
     public String showLoginPage(@RequestParam(required = false) Boolean error,
-                                Model model){
-        if (error!=null && error)
-            model.addAttribute("error","Email or password is incorrect");
+                                Model model) {
+        if (error != null && error)
+            model.addAttribute("error", "Email or password is incorrect");
         return "login";
     }
 
     @GetMapping("/sign-up")
-    public String showSignUpPage(Model model){
-        model.addAttribute("signUpForm",new FullPassenger());
+    public String showSignUpPage(Model model) {
+        model.addAttribute("signUpForm", new FullPassenger());
         return "sign-up";
     }
-
 
 
     public static int parseParam(String param, boolean isPageNumber) {

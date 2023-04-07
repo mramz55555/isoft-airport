@@ -50,4 +50,11 @@ public class Booking extends BaseEntity {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    public Booking(Flight flight, String seat, Passenger passenger, double price) {
+        this.flight = flight;
+        this.seat = seat;
+        this.passenger = passenger;
+        this.price = price;
+    }
 }

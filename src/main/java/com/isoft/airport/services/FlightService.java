@@ -28,8 +28,8 @@ public class FlightService{
     public Page<Flight> querySearch(Pageable pageable, LocalDate departure, LocalDate arrival, String fromName, String toName) {
         return repository.querySearch(pageable, departure, arrival, fromName, toName);
     }
-
     public Page<Flight> findAll(PageRequest pageRequest) {
         return repository.findAll(pageRequest);
     }
+
 }

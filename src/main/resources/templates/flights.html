@@ -21,7 +21,8 @@
         <td th:text="${flight.departure}"></td>
         <td th:text="${flight.arrival}"></td>
         <td>
-            <a sec:authorize="hasRole('!ADMIN')" th:href="@{'/search/flights/schedule/'+${flight.schedule.flightno}}" id="view-button">View</a>
+            <a id="view-button" sec:authorize="!hasRole('ADMIN')"
+               th:href="@{'/public/search/flights/schedule/'+${flight.schedule.flightno}}">View</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{'/admin/flights?flightno='+${flight.schedule.flightno}}" id="view-button2">View</a>
         </td>
     </tr>
@@ -49,19 +50,23 @@
         <td th:text="${flightSchedule.arrival}"></td>
         <td th:text="${flightSchedule.airline.airlineName}"></td>
         <td th:text="${flightSchedule.getFlightDays()}"></td>
-        <td sec:authorize="hasRole('PASSENGER')" th:href="@{'/reserve-flight?flightno='+ ${flightSchedule.flightno}}" id="reserve-button"><a th:href="@{'/reserve-flight?flightno='+${flightSchedule.flightno}}">Reserve</a></td>
+        <td id="reserve-button" sec:authorize="hasRole('PASSENGER')"
+            th:href="@{'/public/reserve-flight?flightno='+ ${flightSchedule.flightno}}"><a
+                th:href="@{'/public/reserve-flight?flightno='+${flightSchedule.flightno}}">Reserve</a></td>
     </tr>
     </tbody>
 </table>
 
 <a sec:authorize="hasRole('ADMIN')" th:if="${flights!=null}" id="left-load2" style="text-decoration: none"
    th:href="@{'/admin/flights?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
-<a sec:authorize="hasRole('!ADMIN')" th:if="${flights!=null}" id="left-load" style="text-decoration: none"
-   th:href="@{'/search/flights?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}">Previous</a>
+<a id="left-load" sec:authorize="!hasRole('ADMIN')" style="text-decoration: none"
+   th:href="@{'/public/search/flights?page-number=' + ${pageNumber > 1 ? pageNumber - 1 : 1}}"
+   th:if="${flights!=null}">Previous</a>
 <a sec:authorize="hasRole('ADMIN')" th:if="${flights!=null}" id="right-load2" style="text-decoration: none"
    th:href="@{'/admin/flights?page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
-<a sec:authorize="hasRole('!ADMIN')" th:if="${flights!=null}" id="right-load" style="text-decoration: none"
-   th:href="@{'/search/flights?page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}">Next</a>
+<a id="right-load" sec:authorize="!hasRole('ADMIN')" style="text-decoration: none"
+   th:href="@{'/public/search/flights?page-number='+${pageNumber < totalPages ? pageNumber +1 : totalPages}}"
+   th:if="${flights!=null}">Next</a>
 
 </body>
 </html>

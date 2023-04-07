@@ -38,6 +38,42 @@
 <div style="backdrop-filter: blur(20px);border:black 1px solid;padding: 0.5em;width:20rem;text-align: center" class="container py-md-5 py-4">
     <div class="section__content section__content--p30">
         <div class="container-fluid">
+                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/employees}">
+                        <div class="overview-item overview-item--c1">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">
+                                            Employees</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('PASSENGER')">
+                <a th:href="@{panel/bookings}">
+                    <div class="overview-item overview-item--c2">
+                        <div class="overview__inner">
+                            <div class="overview-box clearfix">
+                                <div class="icon">
+                                    <i class="fas fa-envelope-open-text"></i>
+                                </div>
+                                <div class="text">
+                                    <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">
+                                        Bookings</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
             <div class="row m-t-25" sec:authorize="hasRole('ADMIN')">
                 <div class="col-sm-6 col-lg-3">
                     <a style="text-decoration: none" th:href="@{/admin/passengers(page-number=1)}">
@@ -49,24 +85,8 @@
                                     </div>
                                     <div class="text">
                                         <h2 style="alignment:center;background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
-                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Passengers</h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-lg-3" sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/employees}">
-                        <div class="overview-item overview-item--c1">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i class="fas fa-envelope-open-text"></i>
-                                    </div>
-                                    <div class="text">
-                                        <h2 style="background-image:linear-gradient(60deg,#98bbda,#6ee0d5);
-                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">Employees</h2>
+                                        width: fit-content;height: auto;padding: 0.5em;font-family: 'Segoe UI'">
+                                            Passengers</h2>
                                     </div>
                                 </div>
                             </div>

@@ -29,7 +29,7 @@ public class AdminController {
     private static final String PAGE__NUMBER = "page-number";
     private static final String TOTAL_PAGES = "totalPages";
     private static final String BOOKINGS = "bookings";
-    private final int nOfRecords = 15;
+    public static final int nOfRecords = 15;
 
     private final PassengerDetailsService passengerDetailsService;
     private final PassengerService passengerService;
@@ -85,6 +85,18 @@ public class AdminController {
         return "redirect:/admin/" + PASSENGERS;
     }
 
+    public static String removeBooking0(long bookingId, BookingService bookingService, HttpSession session, boolean admin) {
+        Optional<Booking> optionalBooking = bookingService.findById(bookingId);
+        if (optionalBooking.isPresent()) {
+            Booking booking = optionalBooking.get();
+            booking.getFlight().getBookings().remove(booking);
+            booking.getPassenger().getBookings().remove(booking);
+            bookingService.deleteById(bookingId);
+            return "redirect:/" + (admin ? "admin/passenger/bookings?passenger_id=" + session.getAttribute("passengerId") : "panel/bookings");
+        }
+        throw new IllegalArgumentException("Booking not found");
+    }
+
     @GetMapping("/passenger/bookings")
     public String showPassengerBookings(@RequestParam(value = "passenger_id", required = false) String passengerId,
                                         @RequestParam(value = PAGE__NUMBER, required = false) String pageNumber,
@@ -100,7 +112,7 @@ public class AdminController {
 
             Passenger passenger = optionalPassenger.get();
 
-            model.addAttribute("passengerName", passenger.getFirstName() + " " + passenger.getLastName());
+            model.addAttribute("passengerName", passenger.getFullName());
             model.addAttribute(PAGE_NUMBER, pageNumber1);
 
             if (session.getAttribute(PASSENGER_ID) == null)
@@ -125,17 +137,8 @@ public class AdminController {
     @GetMapping("/passenger/bookings/remove")
     @Transactional
     public String removeBooking(@RequestParam(name = "booking_id") long bookingId, HttpSession session) {
-        Optional<Booking> optionalBooking = bookingService.findById(bookingId);
-        if (optionalBooking.isPresent()) {
-            Booking booking = optionalBooking.get();
-            booking.getFlight().getBookings().remove(booking);
-            booking.getPassenger().getBookings().remove(booking);
-            bookingService.deleteById(bookingId);
-            return "redirect:/admin/passenger/bookings?passenger_id=" + session.getAttribute("passengerId");
-        }
-        throw new IllegalArgumentException("Booking not found");
+        return removeBooking0(bookingId, bookingService, session, true);
     }
-
 
     @GetMapping("/employees")
     @Transactional

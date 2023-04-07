@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -49,18 +49,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute(name = "signUpForm") FullPassenger fullPassenger, String password,
-                           Errors result, BCryptPasswordEncoder encoder) {
+    public String register(@Valid @ModelAttribute(name = "signUpForm") FullPassenger fullPassenger, BindingResult result, String password
+            , BCryptPasswordEncoder encoder) {
 
         if (result.hasErrors())
             return SIGN_UP;
 
         if (passengerDetailsService.findByEmailAddress(fullPassenger.getEmailAddress().trim()).isPresent()) {
-            result.getAllErrors().add(new ObjectError("errors", "Passenger with this email currently exists"));
+            result.addError(new ObjectError("errors", "Passenger with this email currently exists"));
             return SIGN_UP;
 
         } else if (passengerDetailsService.findByTelephoneNo(fullPassenger.getTelephoneNo().trim()).isPresent()) {
-            result.getAllErrors().add(new ObjectError("errors", "Passenger with this telephone no currently exists"));
+            result.addError((new ObjectError("errors", "Passenger with this telephone no currently exists")));
             return SIGN_UP;
         }
 

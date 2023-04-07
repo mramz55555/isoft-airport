@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/styles/home-style.css"/>
     <title th:text="${passengerName+'''s bookings'}"></title>
 
     <style>
-        .remove-link:visited{
+        .remove-link:visited {
             color: #00002c;
         }
     </style>
@@ -30,17 +31,22 @@
     </thead>
 
     <tbody>
-        <tr th:each="booking : ${bookings}">
-            <td th:text="${booking.flight.fromAirport.name}"></td>
-            <td th:text="${booking.flight.toAirport.name}"></td>
-            <td th:text="${booking.flight.airline.airlineName}"></td>
-            <td th:text="${booking.flight.departure}"></td>
-            <td th:text="${booking.flight.arrival}"></td>
-            <td th:text="${booking.flight.airplane.airplaneType.identifier}"></td>
-            <td th:text="${booking.seat}"></td>
-            <td th:text="${booking.price}+'$'"></td>
-            <td style="background: #fd6f6f;"><a class="remove-link" th:href="@{/admin/passenger/bookings/remove(booking_id=${booking.bookingId})}">Remove</a></td>
-        </tr>
+    <tr th:each="booking : ${bookings}">
+        <td th:text="${booking.flight.fromAirport.name}"></td>
+        <td th:text="${booking.flight.toAirport.name}"></td>
+        <td th:text="${booking.flight.airline.airlineName}"></td>
+        <td th:text="${booking.flight.departure}"></td>
+        <td th:text="${booking.flight.arrival}"></td>
+        <td th:text="${booking.flight.airplane.airplaneType.identifier}"></td>
+        <td th:text="${booking.seat}"></td>
+        <td th:text="${booking.price}+'$'"></td>
+        <td sec:authorize="hasRole('ADMIN')" style="background: #fd6f6f;"><a class="remove-link"
+                                                                             th:href="@{/admin/passenger/bookings/remove(booking_id=${booking.bookingId})}">Remove</a>
+        </td>
+        <td sec:authorize="hasRole('PASSENGER')" style="background: #fd6f6f;"><a class="remove-link"
+                                                                                 th:href="@{/panel/bookings/remove(booking_id=${booking.bookingId})}">Remove</a>
+        </td>
+    </tr>
     </tbody>
 </table>
 

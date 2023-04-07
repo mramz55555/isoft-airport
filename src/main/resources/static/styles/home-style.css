@@ -33,7 +33,7 @@ body {
     backdrop-filter: blur(3em);
 }
 
-#left-load, #right-load ,#right-load2,#left-load2{
+#left-load, #right-load, #right-load2, #left-load2, .showAll {
     background: #2b3fa4;
     border-color: #2b3fa4;
     color: white;

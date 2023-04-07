@@ -28,7 +28,7 @@ public class PassengerDetails extends BaseEntity {
     private int zip;
     private String country;
     @Pattern(regexp = "^[\\w\\-\\.]+@([\\w\\-]+\\.)+[\\w\\-]{2,4}$"
-            , message = "email address should not be blank")
+            , message = "email address is not valid")
     @Column(name = "emailaddress")
     private String emailAddress;
     @Column(name = "telephoneno")

@@ -22,9 +22,11 @@
                     <div id="login-div">
                         <div class="arriveDateBox">
                             <label style="color: #00002c;" for="username">EMAIL</label>
-                            <input type="text" style="height: 30px;border:whitesmoke 4px solid;" name="username" id="username"><br><br>
+                            <input id="username" name="username" style="height: 30px;border:whitesmoke 4px solid;"
+                                   type="text"><br><br>
                             <label style="color: #00002c" for="password">PASSWORD</label>
-                            <input type="password" name="password" id="password" style="height: 30px;border:whitesmoke 4px solid"><br><br>
+                            <input id="password" name="password" style="height: 30px;border:whitesmoke 4px solid"
+                                   type="password"><br><br>
                             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/><br><br>
                         </div>
                         <a style="color: #15004f" class="new-user" th:href="@{/public/sign-up}">New User ?</a>

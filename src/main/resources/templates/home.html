@@ -16,7 +16,8 @@
         <div class="flight" id="flightbox">
             <p style="background-color: #ff8181" th:each=" error : ${errors}" th:text="${error}"></p>
             <form th:action="@{/public/search}" method="get" id="flight-form" th:object="${flightForm}">
-
+            <a class="showAll" style="font-weight: bold;padding: 0.5rem"
+               th:href="@{/public/search/flights(page-number=1,all=true)}">Show All</a>
                 <!-- FROM-->
                 <div id="flight-depart">
                     <div class="arriveDateBox">

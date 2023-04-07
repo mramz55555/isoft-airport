@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             if (passengerDetails != null && encoder.matches(password, passengerDetails.getPassword())) {
                 Passenger passenger = passengerDetails.getPassenger();
-                return new UsernamePasswordAuthenticationToken(passenger.getFirstName() + " " + passenger.getLastName(),
+                return new UsernamePasswordAuthenticationToken(passenger.getFullName() + " " + passengerDetails.getEmailAddress(),
                         null, Collections.singleton(passengerDetails.getRole()));
             }
             return null;
@@ -71,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         public void autoLogin(String email, String password) {
-            Authentication authenticatedUser =authenticate(new UsernamePasswordAuthenticationToken(email,password));
+            Authentication authenticatedUser = authenticate(new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
         }
     }

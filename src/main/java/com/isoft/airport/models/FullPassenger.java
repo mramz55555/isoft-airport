@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -37,10 +36,10 @@ public class FullPassenger {
     private String city;
     @Min(value = 1, message = "Zip" + CONSTRAINT)
     private int zip;
-    @NotBlank(message = "Last name" + CONSTRAINT)
+    @NotBlank(message = "Country " + CONSTRAINT)
+//    @Pattern(regexp = "^(?!country).*$",message = "provide a valid country")
     private String country;
-    @Column(name = "emailaddress")
-    @Pattern(regexp = "^[\\w\\-\\.]+@([\\w\\-]+\\.)+[\\w\\-]{2,4}$",message = "email address "+CONSTRAINT)
+    @Pattern(regexp = "^[\\w\\-\\.]+@([\\w\\-]+\\.)+[\\w\\-]{2,4}$", message = "email address is not valid")
     private String emailAddress;
     @NotBlank(message = "mobile number" + CONSTRAINT)
     @Pattern(regexp = "^$|[0-9]+", message = "Please provide a valid telephone number")

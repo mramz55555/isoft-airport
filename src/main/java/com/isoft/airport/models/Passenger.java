@@ -43,4 +43,8 @@ public class Passenger extends BaseEntity {
         this.passengerDetails.add(passengerDetails);
         passengerDetails.setPassenger(this);
     }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }
