@@ -1,3 +1,2 @@
 # isoft-airport
-
-This project is currently under development.
+A web app for flight reservation and management.
